@@ -10,12 +10,14 @@
 
 using namespace std;
 
-void *set_multiples(){
-    for(int i = 3; i < MAX_VALUE; i++){
-        if((i%2)==0){
-            prime_map.set(i);
+void *set_multiples(void *arg){
+    int multiple = (int) arg;
+    for(int i = (multiple+1); i < MAX_VALUE; i++){
+        if((i % multiple)==0){
+            cout << "I woud set bit # : " << i << endl;    
         }
-    }    
+    }
+    pthread_exit(NULL);    
 }
 
 
@@ -33,8 +35,11 @@ int main(){
 
     for(t = 0; t < NUM_THREADS; t++){
         cout << "Stringing thread: " << t << endl;
-        rc = pthread_create(&threads[t], NULL, set_multiples, NULL);
+        rc = pthread_create(&threads[t], NULL, set_multiples, (void*) t);
     }
+
+    pthread_join(threads[0], NULL);
+    pthread_join(threads[1], NULL);    
 
 
     cout << "Prime Map : " << prime_map << endl;
