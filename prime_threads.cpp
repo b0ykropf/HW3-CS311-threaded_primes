@@ -1,19 +1,19 @@
 #define _POSIX_SOURCE
-#include <bitset> //so we have bitset operations
+
 #include <iostream>
 #include <cmath>
 #include <pthread.h>
 
 
-#define MAX_VALUE 51  //4294967296
+#define MAX_VALUE 80  //4294967296
 #define NUM_THREADS 2
 
 using namespace std;
 
 void *set_multiples(void *arg){
-    int multiple = (int) arg;
-    for(int i = (multiple+1); i < MAX_VALUE; i++){
-        if((i % multiple)==0){
+
+    for(int i = 2; i < MAX_VALUE; i = i + 2){
+        if((i % 2)==0){
             cout << "I woud set bit # : " << i << endl;    
         }
     }
@@ -27,39 +27,22 @@ int main(){
 
     int num_nums = MAX_VALUE;
     int rc;
-    int t; 
-
-    bitset<MAX_VALUE> prime_map;
+    int t;
+    int num_comp = 0; 
 
     pthread_t threads[NUM_THREADS];
 
-    for(t = 0; t < NUM_THREADS; t++){
+    unsigned char bitmap[10];
+    unsigned char bitmask[8] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
+
+    for(t = 0; t < NUM_THREADS; ++t){
         cout << "Stringing thread: " << t << endl;
         rc = pthread_create(&threads[t], NULL, set_multiples, (void*) t);
     }
-
-    pthread_join(threads[0], NULL);
-    pthread_join(threads[1], NULL);    
-
-
-    cout << "Prime Map : " << prime_map << endl;
-    cout << "Number of disqualified integers : " << prime_map.count() << endl;
-    cout << "Current Potential Primes : " << ~prime_map << endl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    for(t = 0; t < NUM_THREADS; ++t){
+        pthread_join(threads[t], NULL);
+        cout << "Thread " << t << " has been rejoined. RIP" << endl;
+    }
 
 
 
