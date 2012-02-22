@@ -5,13 +5,13 @@
 #include <pthread.h>
 
 
-#define MAX_VALUE 800000000 //4294967296
+#define MAX_VALUE 4294967296
 #define NUM_THREADS 4
 
 using namespace std;
 
 long bits_set = 0;
-unsigned char bitmap[100000000];
+unsigned char bitmap[536870912];
 unsigned char bitmask[8] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
 struct thread_data{
@@ -34,7 +34,7 @@ void *thread_prime(void *thread_args){
     cout << "I am thread #" << my_name << endl;
     cout << "My number is #" << my_number << endl;
 
-    for(int i = my_number + my_number; i < MAX_VALUE; i += my_number){
+    for(unsigned long i = my_number + my_number; i < MAX_VALUE; i += my_number){
           // cout << "Thread #" << my_name << " would set bit # : " << i << endl;
            seek_byte = i / 8;
            seek_bit = i % 8;
@@ -53,14 +53,14 @@ int main(){
     unsigned long num_nums = MAX_VALUE;
     int rc;
     int t = 0;
-    int num_comp = 0;
-    int next_num = 2; //first number to start checking 
+    long num_comp = 0;
+    long next_num = 2; //first number to start checking 
 
     int live_threads = 0;
 
     pthread_t threads[NUM_THREADS];
 
-    while(next_num < 100000){
+    while(next_num < 10){
        
         for(t = 0; t < NUM_THREADS; ++t){
             cout << "Stringing thread: " << t << endl;
@@ -77,7 +77,10 @@ int main(){
         }
  
     }
-for(int i = 0; i < 100000000; ++i){
+
+
+/* Warning this code prints out the bit map in full TAKES A LONG TIME
+for(int i = 0; i < 536870812; ++i){
     for(int j = 0; j < 8; ++j){
         if(bitmap[i] & bitmask[j]){
             cout << "1";
@@ -91,6 +94,8 @@ for(int i = 0; i < 100000000; ++i){
         cout << endl;
     }
 }
+*/
+
 
 if(bitmap[1] & bitmask[4]){
     cout << "Bit # 4 has been set" << endl; 
